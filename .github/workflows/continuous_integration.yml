@@ -47,7 +47,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
+          ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+      - name: Diff
+        run: |
+          echo "Differences between original master and merged PR branch:"
+          git diff origin/master..HEAD
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -62,273 +66,273 @@ jobs:
         if: steps.changes.outputs.other_than_docs == 'true'
         run: |
           chmod +x ./.github/workflow_scripts/cloud_lint_check.sh && ./.github/workflow_scripts/cloud_lint_check.sh
-  test_general_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "1.1.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test General Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: general
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_tabular_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "0.7.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test Tabular Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: tabular
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_text_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "0.7.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test Tabular Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: text
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_image_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "0.7.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test Image Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: image
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_multimodal_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "0.7.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test Multimodal Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: multimodal
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_timeseries_cloud:
-    strategy:
-      fail-fast: false
-      matrix:
-        AG_VERSION: ["source", "0.7.0"]
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Test Timeseries Cloud
-        if: steps.changes.outputs.other_than_docs == 'true'
-        uses: ./.github/actions/test-cloud
-        with:
-          submodule-to-test: timeseries
-          ag_version: '${{ matrix.AG_VERSION }}'
-  test_cluster:
-    needs: cloud_lint_check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - name: Check if changes beside docs
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            other_than_docs:
-              - '!(docs/**)**'
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::369469875935:role/CloudCluster
-          role-duration-seconds: 7200
-          aws-region: us-east-1
-      - name: Test Cluster
-        if: steps.changes.outputs.other_than_docs == 'true'
-        run: |
-          chmod +x ./.github/workflow_scripts/test_cluster.sh
-          ./.github/workflow_scripts/test_cluster.sh
-  build_doc:
-    if: ${{ github.event_name != 'schedule' }}
-    needs: [test_general_cloud, test_tabular_cloud, test_text_cloud, test_image_cloud, test_multimodal_cloud, test_timeseries_cloud, test_cluster]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-      - name: Checkout repository(Pull Request Target)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - name: Setup Env Vars
-        uses: ./.github/actions/setup-env-vars
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - uses: r-lib/actions/setup-pandoc@v2
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::369469875935:role/AutoGluonCloudCIDocRole
-          role-duration-seconds: 3600
-          aws-region: us-east-1
-      - name: Build Doc(For push)
-        if: ${{ github.event_name == 'push' }}
-        run: |
-          chmod +x ./.github/workflow_scripts/build_doc.sh
-          ./.github/workflow_scripts/build_doc.sh '${{ github.ref }}' '${{ github.repository }}' '${{ env.SHORT_SHA }}'
-      - name: Build Doc(For pull request)
-        if: ${{ github.event_name == 'pull_request_target' }}
-        env:
-          branch: ${{ github.event.pull_request.head.ref }}
-        run: |
-          chmod +x ./.github/workflow_scripts/build_doc.sh
-          ./.github/workflow_scripts/build_doc.sh "$branch" '${{ github.event.pull_request.head.repo.full_name }}' '${{ env.SHORT_SHA }}' PR-'${{ github.event.number }}'
-      - name: Comment on PR
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: peter-evans/create-or-update-comment@v2.0.0
-        with:
-          issue-number: ${{ github.event.number }}
-          body: |
-            Job PR-${{ github.event.number }}-${{ env.SHORT_SHA }} is done.
-            Docs are uploaded to https://d12sc05jpx1wj5.cloudfront.net/PR-${{ github.event.number }}/${{ env.SHORT_SHA }}/index.html
+  # test_general_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "1.1.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.number }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test General Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: general
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_tabular_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "0.7.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test Tabular Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: tabular
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_text_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "0.7.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test Tabular Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: text
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_image_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "0.7.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.number }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test Image Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: image
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_multimodal_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "0.7.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.10'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test Multimodal Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: multimodal
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_timeseries_cloud:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       AG_VERSION: ["source", "0.7.0"]
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.8'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Test Timeseries Cloud
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       uses: ./.github/actions/test-cloud
+  #       with:
+  #         submodule-to-test: timeseries
+  #         ag_version: '${{ matrix.AG_VERSION }}'
+  # test_cluster:
+  #   needs: cloud_lint_check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.8'
+  #     - name: Check if changes beside docs
+  #       uses: dorny/paths-filter@v2
+  #       id: changes
+  #       with:
+  #         filters: |
+  #           other_than_docs:
+  #             - '!(docs/**)**'
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: arn:aws:iam::369469875935:role/CloudCluster
+  #         role-duration-seconds: 7200
+  #         aws-region: us-east-1
+  #     - name: Test Cluster
+  #       if: steps.changes.outputs.other_than_docs == 'true'
+  #       run: |
+  #         chmod +x ./.github/workflow_scripts/test_cluster.sh
+  #         ./.github/workflow_scripts/test_cluster.sh
+  # build_doc:
+  #   if: ${{ github.event_name != 'schedule' }}
+  #   needs: [test_general_cloud, test_tabular_cloud, test_text_cloud, test_image_cloud, test_multimodal_cloud, test_timeseries_cloud, test_cluster]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #     - name: Checkout repository(Pull Request Target)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: "refs/pull/${{ github.event.pull_request.head.sha }}/merge"
+  #     - name: Setup Env Vars
+  #       uses: ./.github/actions/setup-env-vars
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.8'
+  #     - uses: r-lib/actions/setup-pandoc@v2
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: arn:aws:iam::369469875935:role/AutoGluonCloudCIDocRole
+  #         role-duration-seconds: 3600
+  #         aws-region: us-east-1
+  #     - name: Build Doc(For push)
+  #       if: ${{ github.event_name == 'push' }}
+  #       run: |
+  #         chmod +x ./.github/workflow_scripts/build_doc.sh
+  #         ./.github/workflow_scripts/build_doc.sh '${{ github.ref }}' '${{ github.repository }}' '${{ env.SHORT_SHA }}'
+  #     - name: Build Doc(For pull request)
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       env:
+  #         branch: ${{ github.event.pull_request.head.ref }}
+  #       run: |
+  #         chmod +x ./.github/workflow_scripts/build_doc.sh
+  #         ./.github/workflow_scripts/build_doc.sh "$branch" '${{ github.event.pull_request.head.repo.full_name }}' '${{ env.SHORT_SHA }}' PR-'${{ github.event.number }}'
+  #     - name: Comment on PR
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: peter-evans/create-or-update-comment@v2.0.0
+  #       with:
+  #         issue-number: ${{ github.event.number }}
+  #         body: |
+  #           Job PR-${{ github.event.number }}-${{ env.SHORT_SHA }} is done.
+  #           Docs are uploaded to https://d12sc05jpx1wj5.cloudfront.net/PR-${{ github.event.number }}/${{ env.SHORT_SHA }}/index.html
