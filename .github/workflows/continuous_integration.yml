@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "59 10 * * *"  # 2 hrs after the nightly image build workflow
-  # push:
+  push:
   pull_request_target:
-    # types: [labeled, synchronize, opened]
+    types: [labeled, synchronize, opened]
 
 permissions:
   id-token: write
@@ -41,6 +41,8 @@ jobs:
     needs: permission_check
     runs-on: ubuntu-latest
     steps:
+      - id: pr 
+      uses: jwalton/gh-find-current-pr@v1
       - name: Checkout repository
         if: ${{ github.event_name != 'pull_request_target' }}
         uses: actions/checkout@v3
@@ -48,11 +50,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.sha }}
-      - name: Fetch base branch
-        run: git fetch origin master
-      - name: Merge base branch into PR branch
-        run: git merge origin/master
+          ref: refs/pull/${{ steps.pr.outputs.pr }}
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
