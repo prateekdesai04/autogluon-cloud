@@ -50,15 +50,9 @@ jobs:
         with:
           ref: ${{ github.sha }}
       - name: Fetch base branch
-        run: git fetch origin ${{ github.event.pull_request.base.ref }}
-      - name: Debug base branch
-        run: |
-          MERGE_COMMIT_MESSAGE=$(git log --format=%B -n 1 "${{ github.sha }}")
-          BRANCH_NAME=$(echo "$MERGE_COMMIT_MESSAGE" | grep -oP '(?<=from ).*' | awk -F/ '{print $NF}')
-          echo "Branch Name: $BRANCH_NAME"
-          echo "Context: ${{ toJson(github) }}"
+        run: git fetch origin master
       - name: Merge base branch into PR branch
-        run: git merge origin/${{ github.event.pull_request.base.ref }}
+        run: git merge origin/master
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
