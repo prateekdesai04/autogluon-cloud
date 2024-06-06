@@ -8,7 +8,7 @@ import pytest
 
 from autogluon.cloud import TimeSeriesCloudPredictor
 
-
+# blah
 class CloudTestHelper:
     cpu_training_image = "369469875935.dkr.ecr.us-east-1.amazonaws.com/autogluon-nightly-training:cpu-latest"
     gpu_training_image = "369469875935.dkr.ecr.us-east-1.amazonaws.com/autogluon-nightly-training:gpu-latest"
