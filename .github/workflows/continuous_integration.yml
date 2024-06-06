@@ -6,7 +6,7 @@ on:
     - cron: "59 10 * * *"  # 2 hrs after the nightly image build workflow
   push:
   pull_request_target:
-    types: [labeled, synchronize, opened]
+    # types: [labeled, synchronize, opened]
 
 permissions:
   id-token: write
