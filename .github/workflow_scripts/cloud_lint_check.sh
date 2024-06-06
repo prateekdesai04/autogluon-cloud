@@ -2,6 +2,9 @@
 
 set -ex
 
+echo "Blaaaaaaaaah"
+
+
 source $(dirname "$0")/env_setup.sh
 
 setup_lint_env
