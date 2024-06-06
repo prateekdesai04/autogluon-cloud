@@ -1,4 +1,4 @@
-#TEST
+#TEST-test
 name: Continuous Integration
 
 on:
