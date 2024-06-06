@@ -54,7 +54,7 @@ jobs:
       - name: Debug base branch
         run: |
           echo "Base branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Context: ${{ toJson(github) }}"
+          echo "Context: ${{ toJson(github.event) }}"
       - name: Merge base branch into PR branch
         run: git merge origin/${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-python@v4
